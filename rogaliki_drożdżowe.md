@@ -112,3 +112,13 @@ Ciasto wyszło puszyste, nie ocekało olejem i dobrze się z nim pracowało. Spr
 - jajko
 - szczypta soli
 Ciasto było mocno lepkie przy formowaniu, aż trochę za bardzo.
+
+### 9. Połowa porcji + więcej jajek i mąki
+- 275g mąki pszennej chlebowej
+- 32g mleka
+- 25g drożdży
+- 20g cukru
+- 100g masła
+- 2 jajka
+- szczypta soli
+Ciasto było mocno mączne i suchsze w smaku, bardziej twarde i kruche. Nie były takie mięciutkie i puszyste te rogaliki przez to. Zdecydowanie niedobre proporcje.
