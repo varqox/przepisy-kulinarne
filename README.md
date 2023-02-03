@@ -41,6 +41,9 @@ Pyszny kurczak curry mamy, długo doskonalony przepis. Kurczak wychodzi pyszny i
 ### [Pierogi z pieczoną dynią i białym serem](pierogi_z_pieczoną_dynią_i_białym_serem.md)
 Ciekawe pierogi. Smak niecodzienny, ale dobry. Polecam wypróbować.
 
+### [Pizza](pizza.md)
+Prosta i pyszna pizza.
+
 ## Śniadaniowo / kolacyjne
 
 ### [Placki z serka wiejskiego](placki_z_serka_wiejskiego.md)
