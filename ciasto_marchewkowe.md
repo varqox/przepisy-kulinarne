@@ -36,7 +36,7 @@ Przepis można spokojnie skalować i np. zrobić `3/5` (= z 3 jajek) w keksówce
 	- przyprawę do piernika
 	- cynamon.
 5. Mieszamy wszystko dokładnie trzepaczką.
-6. Ścieramy obraną marchewkę na drobnych oczkach (lub rozdrabniamy w np. blenderze na kawałki max. jakieś 2mm wielkości) i dodajemy do miski. Marchewki nie ma co odsączać w tym przepisie.
+6. Ścieramy obraną marchewkę na drobnych oczkach (lub rozdrabniamy w np. blenderze na kawałki około 2-3mm średnicy w przekroju) i dodajemy do miski. Marchewki nie ma co odsączać w tym przepisie.
 7. Bierzemy ___większą___ miskę, wsypujemy cukier i wbijamy jajka.
 8. Mocno ubijamy jajka z cukrem na [jasną puchową masę](#ubicie-jajek) (cukier nie musi się do końca rozpuścić).
 9. Do jajek dodajemy olej i wszystko mieszamy dokładnie.
