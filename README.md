@@ -21,6 +21,9 @@ Pyszne drożdżówki, nie takie suche i słodkie jak kupne.
 ### [Budyń](budyń.md)
 Prosty i szybki domowy budyń
 
+### [Biszkopt](biszkopt.md)
+Sprawdzony i niezawodny przepis na klasyczny biszkopt, bez proszku do pieczenia.
+
 ## Obiadowe
 
 ### [Chili con carne](chili_con_carne.md)
