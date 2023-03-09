@@ -66,6 +66,7 @@ Ciasto bez polewy też jest pycha i polecam. Polewa to trochę wartości dodanej
 
 #### BIO proszek do pieczenia
 : Zwykły proszek do pieczenia pozostawia charakterystyczny posmak. Dla mnie jest on mocno __gorzki w smaku__. Niektórym może nie przeszkadzać, ale serio czuć różnicę między tymi dwoma. BIO proszek nie ma fosforanów oraz chyba ma mniej sody. Użycie BIO proszku do pieczenia (który tylko trudniej zdobyć, bo jest w podobnej cenie co zwykły, a dalej to grosze), sprawia, że ciasto smakuje mniej sztucznie, nie jest gorzkie i rośnie bez problemów. Polecam z całego serduszka, odkąd na tym cieście to odkryłem, już zawsze będę używał BIO proszku do pieczenia, właśnie ze względu smaku.
+: Używam __Lecker's Bio__ proszku do pieczenia, który ma skład: `Skrobia kukurydziana, kwas winowy (winian potasu 24,7%), soda oczyszczona`. Próbowałem innego Vitally Food BIO o składzie: `skrobia, substancje spulchniające: winiany potasu, węglany sodu; olej roślinny rzepakowy`, ale był podobny posmak jak przy zwykłym proszku do pieczenia, więc go nie polecam.
 
 #### Ubicie jajek
 : Jajka z cukrem potrzebują być ubite mocno, na jasną, puchową masę. Inaczej grozi to zakalcem / zakalcowatym ciastem, gdy się za słabo ubije. Naprawdę warto te parę minut nad tym spędzić.
@@ -203,3 +204,6 @@ Jajka były mocno ubite i mocno napowietrzone. Marchewka była starta obrana.
 Suche składniki (bez cukru, bo był w jajkach) zostały wymieszane dokładnie, potem dodana starta marchewka. **Suche składniki były dodane do masy jajecznej** - dużo szybciej się wymieszało wszystko.
 Pieczone 50 minut w tortownicy 24cm średnicy.
 Wyszło wilgotne w środku, jakby lekko zakalcowate. Nie było w ogóle gorzkie w smaku i wyrosło dobrze. Bardzo smaczne było, dostałem kilka próśb o przepis.
+
+### 10. inny bio proszek (Vitally Food BIO)
+Cisto miało posmak jak po zwykłym proszku do pieczenia, nie polecam tego proszku.
