@@ -73,4 +73,4 @@ Dobry sos do pizzy.
 Wielokrotnie sprawdzony przepis na pyszne tortille domowe. Smakują wyraźnie lepiej niż kupowane, choć są troszkę czasochłonne.
 
 ## Przepisy w trakcie tworzenia
-[Znajdziesz je tutaj](niepełne/)
+[Znajdziesz je tutaj](https://github.com/varqox/przepisy-kulinarne/tree/main/niepełne/)
