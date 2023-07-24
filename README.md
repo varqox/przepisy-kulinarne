@@ -24,6 +24,8 @@ Prosty i szybki domowy budyń
 ### [Biszkopt](biszkopt.md)
 Sprawdzony i niezawodny przepis na klasyczny biszkopt, bez proszku do pieczenia.
 
+### [Ciasto francuskie ze szpinakiem i fetą](ciasto_francuskie_ze_szpinakiem_i_fetą.html)
+
 ## Obiadowe
 
 ### [Chili con carne](chili_con_carne.md)
