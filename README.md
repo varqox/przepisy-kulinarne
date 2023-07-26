@@ -12,7 +12,7 @@ Trochę puszysty, treściwy i pyszny sernik.
 ### [Rogaliki drożdżowe](rogaliki_drożdżowe.md)
 Długo doskonalone i pyszne, wychodzą puszyste i aksamitne w smaku, nie za suche.
 
-### [Tiramisu](tiramisu.md)
+### [Tiramisu](tiramisu.html)
 Pyszny przepis którego używamy w domu.
 
 ### [Drożdżówki](drożdżówki.md)
