@@ -101,11 +101,11 @@ function parse_markdown_text(str) {
 					</g>
 					</svg>`;
 				res.push(a);
-			} else if ((m = part.match(/^\s*(\S+)\s*=\s*(\d+)(\s*\S+)?\s*$/)) != null) {
+			} else if ((m = part.match(/^\s*(\S+)\s*=\s*(\d+(\.\d+)?)(\s*\S+)?\s*$/)) != null) {
 				// name = value units
 				const name = m[1];
 				const value = m[2];
-				const unit = m[3] ?? '';
+				const unit = m[4] ?? '';
 				vars.set(name, {value: value, unit: unit});
 				scaled_values.push({
 					update: () => {
@@ -114,21 +114,101 @@ function parse_markdown_text(str) {
 				})
 				scaled_values.at(-1).update();
 				res.push(elem);
-			} else if ((m = part.match(/^\s*(\S+)\s*$/))) {
-				// name
-				const name = m[1];
-				const x = vars.get(name);
-				if (x == null) {
-					alert(`Use of undefined variable: ${name}`);
-					continue;
-				}
-				scaled_values.push({
-					update: () => {
-						elem.textContent = x.value * scale.value / scale_denom + x.unit;
-					},
-				});
-				scaled_values.at(-1).update();
-				res.push(elem);
+			} else if ((m = part.match(/^\s*\S+(\s*[+\-*/x]\s*\S+)*\s*$/))) {
+				(() => {
+					// expression
+					let lexed = [];
+					let expr = part;
+					while (expr.length > 0) {
+						expr = expr.trimStart();
+						if ((m = expr.match(/^\d+(\.\d+)?\b/))) {
+							lexed.push({type: 'num', value: parseFloat(m[0])})
+							expr = expr.slice(m[0].length);
+						} else if ((m = expr.match(/^[+\-]/))) {
+							lexed.push({type: 'operator', kind: m[0], priority: 0});
+							expr = expr.slice(m[0].length);
+						} else if ((m = expr.match(/^[*/x]/))) {
+							lexed.push({type: 'operator', kind: m[0], priority: 1});
+							expr = expr.slice(m[0].length);
+						} else if ((m = expr.match(/^\S+/))) {
+							const x = vars.get(m[0]);
+							if (x == null) {
+								alert(`Use of undefined variable: ${name}`);
+								return;
+							}
+							lexed.push({type: 'var', var: x});
+							expr = expr.slice(m[0].length);
+						} else {
+							alert(`Cannot parse expression: ${expr}`);
+							return;
+						}
+					}
+					const evalute_expression = () => {
+						let val_stack = [];
+						let unit_stack = [];
+						let oper_stack = [];
+						const normalize_by = (priority) => {
+							console.assert(val_stack.length == unit_stack.length);
+							console.assert(val_stack.length - 1 == oper_stack.length);
+							while (oper_stack.length > 0 && oper_stack.at(-1).priority >= priority) {
+								const b = val_stack.pop();
+								const a = val_stack.pop();
+								const b_unit = unit_stack.pop();
+								const a_unit = unit_stack.pop();
+								const oper = oper_stack.pop();
+
+								if (a_unit == b_unit) {
+									unit_stack.push(a_unit);
+								} else if (a_unit == '') {
+									unit_stack.push(b_unit);
+								} else if (b_unit == '') {
+									unit_stack.push(a_unit);
+								} else {
+									alert(`Computation on different units: ${a_unit} and ${b_unit}`);
+									return 'error';
+								}
+
+								if (oper.kind == '+') {
+									val_stack.push(a + b);
+								} else if (oper.kind == '-') {
+									val_stack.push(a - b);
+								} else if (oper.kind == '*') {
+									val_stack.push(a * b);
+								} else if (oper.kind == '/') {
+									val_stack.push(a / b);
+								} else if (oper.kind == 'x') {
+									val_stack.push(a * b);
+								} else {
+									throw Error('BUG');
+								}
+							}
+						};
+
+						for (const l of lexed) {
+							if (l.type == 'num') {
+								val_stack.push(l.value);
+								unit_stack.push('');
+							} else if (l.type == 'var') {
+								val_stack.push(l.var.value * scale.value / scale_denom)
+								unit_stack.push(l.var.unit);
+							} else if (l.type == 'operator') {
+								normalize_by(l.priority);
+								oper_stack.push({kind: l.kind, priority: l.priority});
+							} else {
+								throw Error('BUG');
+							}
+						}
+						normalize_by(0);
+						return val_stack[0] + unit_stack[0];
+					};
+					scaled_values.push({
+						update: () => {
+							elem.textContent = evalute_expression();
+						},
+					});
+					scaled_values.at(-1).update();
+					res.push(elem);
+				})()
 			} else {
 				alert(`Unknown command: ${part}`)
 			}
