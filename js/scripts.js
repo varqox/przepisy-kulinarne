@@ -44,10 +44,13 @@ scale.addEventListener('change', (event) => {
 let current_slide = null;
 let current_elem = null;
 
-function start_new_slide() {
+function start_new_slide(presentation_ended = false) {
 	start_new_slide.slide_num ??= 1;
+	if (presentation_ended) {
+		start_new_slide.slide_num = '';
+	}
 	current_slide = document.body.appendChild(document.createElement('div'));
-	const slide_id = start_new_slide.slide_num++;
+	const slide_id = start_new_slide.slide_num == '' ? '' : start_new_slide.slide_num++;
 	current_slide.setAttribute('data-slide-id', slide_id);
 	current_elem = null;
 }
@@ -227,8 +230,13 @@ function parse_markdown_lines(lines, line_idx) {
 
 	let line = lines[line_idx];
 	if (line.startsWith('~')) {
-		start_new_slide();
-		line = line.slice(1);
+		if (line.startsWith('~~')) {
+			start_new_slide(true);
+			line = line.slice(2);
+		} else {
+			start_new_slide();
+			line = line.slice(1);
+		}
 	}
 
 	const add_heading = (level) => {
