@@ -70,10 +70,56 @@ function parse_markdown_text(str) {
 
 	let normal_text = false;
 	const res = [];
+	let elem_stack = [];
+	const append_text_fragment = (text) => {
+		console.log('append_text_fragment: ', text);
+		const node = document.createTextNode(text);
+		if (elem_stack.length > 0) {
+			elem_stack.at(-1).appendChild(node);
+		} else {
+			res.push(node)
+		}
+	};
+
 	for (const part of str.split('$')) {
 		normal_text = !normal_text;
 		if (normal_text) {
-			res.push(document.createTextNode(part));
+			let str = part;
+			while (str.length > 0) {
+				let unmatched_length = str.search(/\*\*|--|https?:\/\//);
+				console.log('unmatched_length: ', unmatched_length);
+				if (unmatched_length == -1) {
+					append_text_fragment(str);
+					break;
+				}
+				// Append raw string
+				if (unmatched_length > 0) {
+					append_text_fragment(str.slice(0, unmatched_length));
+					str = str.slice(unmatched_length);
+				}
+				// Stylize string
+				let m;
+				if (str.startsWith('**')) {
+					if (elem_stack.length > 0 && elem_stack.at(-1).tagName == 'B') {
+						elem_stack.pop();
+					} else {
+						elem_stack.push(document.createElement('b'));
+						res.push(elem_stack.at(-1));
+					}
+					str = str.slice(2);
+				} else if (str.startsWith('--')) {
+					append_text_fragment('–');
+					str = str.slice(2);
+				} else if ((m = part.match(/https?:\/\/[\S]*(?<![.!',;:?])/))) {
+					console.log(m);
+					const a = elem_with_text('a', m[0]);
+					a.href = m[0];
+					res.push(a);
+					str = str.slice(m[0].length);
+				} else {
+					alert(`BUG: unmatched fragment: ${str}`);
+				}
+			}
 		} else {
 			const elem = document.createElement('span');
 			let m;
@@ -219,6 +265,10 @@ function parse_markdown_text(str) {
 	}
 	if (add_br) {
 		res.push(document.createElement('br'));
+	}
+
+	if (elem_stack.length > 0) {
+		alert(`Unterminated stylization: <${elem_stack.at(-1).tagName}> in text: ${str}`);
 	}
 	return res;
 }
