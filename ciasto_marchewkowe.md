@@ -84,12 +84,14 @@ Ciasto bez polewy też jest pycha i polecam. Polewa to trochę wartości dodanej
 - 177g oleju rzepakowego
 - 215g cukru pudru
 - bez przyprawy do piernika
+
 Wyszło git, bardzo dobre
 
 ### 2.
 - 410g marchewki
 - 263g mąki
 - 179g oleju
+
 Wyszło sztos
 
 ### 3.
@@ -103,6 +105,7 @@ Wyszło sztos
 - mała szczypta soli do jajek
 - 5 jajek L (282g)
 - bez proszku do pieczenia
+
 Trochę zakalec wyszedł, ale nie aż tak bardzo mocno :(
 
 ### 4.
@@ -115,6 +118,7 @@ Trochę zakalec wyszedł, ale nie aż tak bardzo mocno :(
 - 2.6g przyprawy do piernika
 - 1.7g startego całego cynamonu
 - 8g proszku do pieczenia
+
 Jajka były średnio ubite i średnio napowietrzone.
 Masa jajeczna była dodana do reszty składników.
 Pieczone 45 minut.
@@ -131,6 +135,7 @@ Wyszło gorzkie, innym raczej smakowało.
 - 1g cynamonu
 - 0.7g wanilii
 - 2.4g proszku do pieczenia
+
 Marchewka była praktycznie bez smaku.
 Jajka były lekko ubite i mało napowietrzone. Marchewka była starta nieobrana.
 Masa jajeczna była dodana do reszty składników.
@@ -147,6 +152,7 @@ Wyrosło w piekarniku, ale ostatecznie wyszedł zbity zakalec i było mocno gorz
 - 0.4g cynamonu
 - 0.8g proszku do pieczenia
 - 0.3g wanili
+
 Marchewka była praktycznie bez smaku.
 Jajka były mocno ubite i mocno napowietrzone. Marchewka była starta nieobrana.
 Suche składniki (bez cukru, bo był w jajkach) zostały wymieszane dokładnie, potem dodana starta marchewka. **Suche składniki były dodane do masy jajecznej** - dużo szybciej się wymieszało wszystko.
@@ -163,6 +169,7 @@ Wyszło trochę suchawe i cienkie, ale dalej jakby na granicy zakalca.
 - 0.7g cynamonu
 - 0.3g wanili
 - 2.2g BIO proszku do pieczenia 21g/500g mąki
+
 Marchewka była praktycznie bez smaku.
 Jajka były mocno ubite i mocno napowietrzone. Marchewka była starta półobrana tzn. trochę obrana, trochę nie -- losowo.
 Suche składniki (bez cukru, bo był w jajkach) zostały wymieszane dokładnie, potem dodana starta marchewka. **Suche składniki były dodane do masy jajecznej** - dużo szybciej się wymieszało wszystko.
