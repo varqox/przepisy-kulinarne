@@ -313,9 +313,13 @@ function parse_markdown_lines(lines, line_idx) {
 	parse_markdown_lines(lines, line_idx + 1);
 }
 
+const przepisy_kulinarne_a = elem_with_text('a', 'przepisy-kulinarne');
+przepisy_kulinarne_a.href = '.';
+document.body.appendChild(elem_of('h1', przepisy_kulinarne_a));
+
 start_new_slide();
 parse_markdown_lines(markdown.split('\n').map(l => l.trimEnd()), 0);
-anchors.add('h1, h2, h3, h4, h5, h6'); // add anchor buttons to every h1, h2, etc. element
+anchors.add('[data-slide-id] > h1, h2, h3, h4, h5, h6'); // add anchor buttons to every h1, h2, etc. element
 
 // Allow scrolling past the page end
 const spacer = document.body.appendChild(document.createElement('div'));
