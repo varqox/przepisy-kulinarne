@@ -49,6 +49,9 @@ Ciekawe pierogi. Smak niecodzienny, ale dobry. Polecam wypróbować.
 ### [Pizza](https://varqox.github.io/przepisy-kulinarne/pizza.html)
 Prosta i pyszna pizza.
 
+### [Pesto z bazylii](https://varqox.github.io/przepisy-kulinarne/pesto_z_bazylii.html)
+Przepyszne pesto ze świeżej bazylii. Kupowane w słoikach się do tego nie umywa.
+
 ## Śniadaniowo / kolacyjne
 
 ### [Placki z serka wiejskiego](https://varqox.github.io/przepisy-kulinarne/placki_z_serka_wiejskiego.html)
