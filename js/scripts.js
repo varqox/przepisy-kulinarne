@@ -158,7 +158,7 @@ function parse_markdown_text(str) {
 				vars.set(name, {value: value, unit: unit});
 				scaled_values.push({
 					update: () => {
-						elem.textContent = value * scale.value / scale_denom + unit;
+						elem.textContent = (Math.round(value * scale.value / scale_denom * 100) / 100) + unit;
 					},
 				})
 				scaled_values.at(-1).update();
@@ -248,7 +248,7 @@ function parse_markdown_text(str) {
 							}
 						}
 						normalize_by(0);
-						return val_stack[0] + unit_stack[0];
+						return (Math.round(val_stack[0] * 100) / 100) + unit_stack[0];
 					};
 					scaled_values.push({
 						update: () => {
