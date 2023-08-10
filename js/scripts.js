@@ -72,7 +72,6 @@ function parse_markdown_text(str) {
 	const res = [];
 	let elem_stack = [];
 	const append_text_fragment = (text) => {
-		console.log('append_text_fragment: ', text);
 		const node = document.createTextNode(text);
 		if (elem_stack.length > 0) {
 			elem_stack.at(-1).appendChild(node);
@@ -87,7 +86,6 @@ function parse_markdown_text(str) {
 			let str = part;
 			while (str.length > 0) {
 				let unmatched_length = str.search(/\*\*|--|https?:\/\//);
-				console.log('unmatched_length: ', unmatched_length);
 				if (unmatched_length == -1) {
 					append_text_fragment(str);
 					break;
@@ -111,7 +109,6 @@ function parse_markdown_text(str) {
 					append_text_fragment('–');
 					str = str.slice(2);
 				} else if ((m = part.match(/https?:\/\/[\S]*(?<![.!',;:?])/))) {
-					console.log(m);
 					const a = elem_with_text('a', m[0]);
 					a.href = m[0];
 					res.push(a);
