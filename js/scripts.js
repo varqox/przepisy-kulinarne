@@ -120,12 +120,12 @@ function parse_markdown_text(str) {
 		} else {
 			const elem = document.createElement('span');
 			let m;
-			if ((m = part.match(/^\s*scale(\s+(\d+)(\s*\/\s*(\d+))?)?\s*$/)) != null) {
+			if ((m = part.match(/^\s*scale(\s+(\d+(\.\d+)?)(\s*\/\s*(\d+(\.\d+)?)(\s+hide_denom)?)?)?\s*$/)) != null) {
 				// scale x / y
 				scale.value = m[2] ?? 1;
-				scale_denom = m[4] ?? 1;
+				scale_denom = m[5] ?? 1;
 				res.push(scale);
-				if (scale_denom != 1) {
+				if (scale_denom != 1 && m[7] === undefined) {
 					res.push(document.createTextNode(' / ' + scale_denom));
 				}
 			} else if ((m = part.match(/^\s*present\s*$/)) != null) {
