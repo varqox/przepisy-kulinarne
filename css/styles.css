@@ -57,6 +57,10 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+a.anchorjs-link {
+	font: 1em / 1 anchorjs-icons;
+	padding-left: 0.375em;"
+}
 #scale {
 	width: 4em;
 	height: 2em;
@@ -89,8 +93,4 @@ body.presentation {
 }
 a.present {
 	vertical-align: middle;
-}
-a.anchorjs-link {
-	font: 1em / 1 anchorjs-icons;
-	padding-left: 0.375em;"
 }
