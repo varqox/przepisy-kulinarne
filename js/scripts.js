@@ -115,6 +115,8 @@ function parse_markdown_text(str) {
 					str = str.slice(m[0].length);
 				} else {
 					alert(`BUG: unmatched fragment: ${str}`);
+					append_text_fragment(str);
+					str = "";
 				}
 			}
 		} else {
