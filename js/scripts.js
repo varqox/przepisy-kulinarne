@@ -91,7 +91,7 @@ function parse_markdown_text(str) {
 		if (normal_text) {
 			let str = part;
 			while (str.length > 0) {
-				let unmatched_length = str.search(/\\?[\*_]|--|https?:\/\//);
+				let unmatched_length = str.search(/\\?[\*_]|---?|https?:\/\//);
 				if (unmatched_length == -1) {
 					append_text_fragment(str);
 					break;
@@ -140,6 +140,9 @@ function parse_markdown_text(str) {
 						elem_stack.push(em);
 					}
 					str = str.slice(1);
+				} else if (str.startsWith('---')) {
+					append_text_fragment('—');
+					str = str.slice(3);
 				} else if (str.startsWith('--')) {
 					append_text_fragment('–');
 					str = str.slice(2);
