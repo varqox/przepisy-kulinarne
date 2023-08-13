@@ -108,7 +108,7 @@ function parse_markdown_text(str) {
 				} else if (str.startsWith('--')) {
 					append_text_fragment('–');
 					str = str.slice(2);
-				} else if ((m = part.match(/https?:\/\/[\S]*(?<![.!',;:?])/))) {
+				} else if ((m = str.match(/^https?:\/\/[\S]*(?<![.!',;:?])/))) {
 					const a = elem_with_text('a', m[0]);
 					a.href = m[0];
 					res.push(a);
