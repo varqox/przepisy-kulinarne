@@ -152,6 +152,10 @@ function parse_markdown_text(str) {
 				const name = m[1];
 				const value = m[2];
 				const unit = m[4] ?? '';
+				if (vars.has(name)) {
+					alert(`Redefinition of the variable: ${name}`);
+					return;
+				}
 				vars.set(name, {value: value, unit: unit});
 				scaled_values.push({
 					update: () => {
