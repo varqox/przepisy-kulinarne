@@ -91,7 +91,7 @@ function parse_markdown_text(str) {
 		if (normal_text) {
 			let str = part;
 			while (str.length > 0) {
-				let unmatched_length = str.search(/\\?[\*_]|---?|https?:\/\/|\[.*?\]\(.*?\)/);
+				let unmatched_length = str.search(/\\?[\*_]|---?|https?:\/\/|\[.*?\]\(.*?\)|`.*?`/);
 				if (unmatched_length == -1) {
 					append_text_fragment(str);
 					break;
@@ -155,6 +155,9 @@ function parse_markdown_text(str) {
 					const a = elem_with_text('a', m[1]);
 					a.href = m[2];
 					append_elem(a);
+					str = str.slice(m[0].length);
+				} else if ((m = str.match(/^`(.*?)`/))) {
+					append_elem(elem_with_text('code', m[1]));
 					str = str.slice(m[0].length);
 				} else {
 					alert(`BUG: unmatched fragment: ${str}`);
