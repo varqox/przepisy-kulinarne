@@ -71,13 +71,19 @@ function parse_markdown_text(str) {
 	let normal_text = false;
 	const res = [];
 	let elem_stack = [];
-	const append_text_fragment = (text) => {
-		const node = document.createTextNode(text);
+	let str_styles_stack = [];
+	const top_str_style_matches = (str_style_to_match) => {
+		return str_styles_stack.length > 0 && str_styles_stack.at(-1) == str_style_to_match;
+	};
+	const append_elem = (elem) => {
 		if (elem_stack.length > 0) {
-			elem_stack.at(-1).appendChild(node);
+			elem_stack.at(-1).appendChild(elem);
 		} else {
-			res.push(node)
+			res.push(elem);
 		}
+	};
+	const append_text_fragment = (text) => {
+		append_elem(document.createTextNode(text));
 	};
 
 	for (const part of str.split('$')) {
@@ -85,7 +91,7 @@ function parse_markdown_text(str) {
 		if (normal_text) {
 			let str = part;
 			while (str.length > 0) {
-				let unmatched_length = str.search(/\*\*|--|https?:\/\//);
+				let unmatched_length = str.search(/\\?[\*_]|--|https?:\/\//);
 				if (unmatched_length == -1) {
 					append_text_fragment(str);
 					break;
@@ -97,21 +103,50 @@ function parse_markdown_text(str) {
 				}
 				// Stylize string
 				let m;
-				if (str.startsWith('**')) {
-					if (elem_stack.length > 0 && elem_stack.at(-1).tagName == 'B') {
+				if (str.startsWith('\\')) {
+					append_text_fragment(str[1]);
+					str = str.slice(2);
+				} else if (str.startsWith('***') || str.startsWith('___')) {
+					if (top_str_style_matches(str.substring(0, 3))) {
+						str_styles_stack.pop();
 						elem_stack.pop();
 					} else {
-						elem_stack.push(document.createElement('b'));
-						res.push(elem_stack.at(-1));
+						const em = document.createElement('em');
+						const b = em.appendChild(document.createElement('b'));
+						append_elem(em);
+						str_styles_stack.push(str.substring(0, 3));
+						elem_stack.push(b);
+					}
+					str = str.slice(3);
+				} else if (str.startsWith('**') || str.startsWith('__')) {
+					if (top_str_style_matches(str.substring(0, 2))) {
+						str_styles_stack.pop();
+						elem_stack.pop();
+					} else {
+						const b = document.createElement('b');
+						append_elem(b);
+						str_styles_stack.push(str.substring(0, 2));
+						elem_stack.push(b);
 					}
 					str = str.slice(2);
+				} else if (str.startsWith('*') || str.startsWith('_')) {
+					if (top_str_style_matches(str.substring(0, 1))) {
+						str_styles_stack.pop();
+						elem_stack.pop();
+					} else {
+						const em = document.createElement('em');
+						append_elem(em);
+						str_styles_stack.push(str.substring(0, 1));
+						elem_stack.push(em);
+					}
+					str = str.slice(1);
 				} else if (str.startsWith('--')) {
 					append_text_fragment('–');
 					str = str.slice(2);
 				} else if ((m = str.match(/^https?:\/\/[\S]*(?<![.!',;:?])/))) {
 					const a = elem_with_text('a', m[0]);
 					a.href = m[0];
-					res.push(a);
+					append_elem(a);
 					str = str.slice(m[0].length);
 				} else {
 					alert(`BUG: unmatched fragment: ${str}`);
@@ -126,9 +161,9 @@ function parse_markdown_text(str) {
 				// scale x / y
 				scale.value = m[2] ?? 1;
 				scale_denom = m[5] ?? 1;
-				res.push(scale);
+				append_elem(scale);
 				if (scale_denom != 1 && m[7] === undefined) {
-					res.push(document.createTextNode(' / ' + scale_denom));
+					append_text_fragment(' / ' + scale_denom);
 				}
 			} else if ((m = part.match(/^\s*present\s*$/)) != null) {
 				// present
@@ -148,7 +183,7 @@ function parse_markdown_text(str) {
 						</g>
 					</g>
 					</svg>`;
-				res.push(a);
+				append_elem(a);
 			} else if ((m = part.match(/^\s*(\S+)\s*=\s*(\d+(\.\d+)?)(\s*\S+)?\s*$/)) != null) {
 				// name = value units
 				const name = m[1];
@@ -165,7 +200,7 @@ function parse_markdown_text(str) {
 					},
 				})
 				scaled_values.at(-1).update();
-				res.push(elem);
+				append_elem(elem);
 			} else if ((m = part.match(/^\s*\S+(\s*[+\-*/x]\s*\S+)*\s*$/))) {
 				(() => {
 					// expression
@@ -259,7 +294,7 @@ function parse_markdown_text(str) {
 						},
 					});
 					scaled_values.at(-1).update();
-					res.push(elem);
+					append_elem(elem);
 				})()
 			} else {
 				alert(`Unknown command: ${part}`)
