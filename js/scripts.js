@@ -91,7 +91,7 @@ function parse_markdown_text(str) {
 		if (normal_text) {
 			let str = part;
 			while (str.length > 0) {
-				let unmatched_length = str.search(/\\?[\*_]|---?|https?:\/\//);
+				let unmatched_length = str.search(/\\?[\*_]|---?|https?:\/\/|\[.*?\]\(.*?\)/);
 				if (unmatched_length == -1) {
 					append_text_fragment(str);
 					break;
@@ -149,6 +149,11 @@ function parse_markdown_text(str) {
 				} else if ((m = str.match(/^https?:\/\/[\S]*(?<![.!',;:?])/))) {
 					const a = elem_with_text('a', m[0]);
 					a.href = m[0];
+					append_elem(a);
+					str = str.slice(m[0].length);
+				} else if ((m = str.match(/^\[(.*?)\]\((.*?)\)/))) {
+					const a = elem_with_text('a', m[1]);
+					a.href = m[2];
 					append_elem(a);
 					str = str.slice(m[0].length);
 				} else {
