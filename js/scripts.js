@@ -279,7 +279,7 @@ function parse_markdown_text(str) {
 						} else if ((m = expr.match(/^\S+/))) {
 							const x = vars.get(m[0]);
 							if (x == null) {
-								alert(`Use of undefined variable: ${name}`);
+								alert(`Use of undefined variable: ${m[0]}`);
 								return;
 							}
 							lexed.push({type: 'var', var: x});
