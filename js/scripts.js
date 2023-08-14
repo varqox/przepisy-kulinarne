@@ -16,16 +16,17 @@ function elem_of(tag, ...args) {
 
 const ID = (() => {
 	const map = new Map();
-	this.make_unique = (str) => {
-		const count = map.get(str);
-		if (count === undefined) {
-			map.set(str, 1);
-			return str;
+	return {
+		make_unique: (str) => {
+			const count = map.get(str);
+			if (count === undefined) {
+				map.set(str, 1);
+				return str;
+			}
+			map.set(str, count + 1);
+			return str + '!' + count;
 		}
-		map.set(str, count + 1);
-		return str + '!' + count;
 	};
-	return this;
 })();
 
 const scale = document.createElement('input')
@@ -41,19 +42,66 @@ scale.addEventListener('change', (event) => {
 	}
 }, {passive: true});
 
-let current_slide = null;
-let current_elem = null;
+const slide_elem_stack = (() => {
+	const self = {};
+	const elem_stack = [null];
+	const elem_cloner_stack = [];
+	self.change_slide_elem = (slide_elem) => {
+		elem_stack[0] = slide_elem;
+		for (let i = 1; i < elem_stack.length; ++i) {
+			elem_stack[i] = elem_cloner_stack[i - 1](elem_stack[i]);
+			elem_stack[i - 1].appendChild(elem_stack[i]);
+		}
+	};
+	self.size = () => {
+		return elem_stack.length - 1;
+	};
+	self.top = () => {
+		return elem_stack.at(-1);
+	};
+	self.push = (new_slide_elem_cloner) => {
+		elem_cloner_stack.push(new_slide_elem_cloner);
+		const elem = new_slide_elem_cloner(null);
+		self.top().appendChild(elem);
+		elem_stack.push(elem);
+	};
+	self.pop = () => {
+		// Remove element if it was empty
+		const elem_to_pop = self.top();
+		if (elem_to_pop.childElementCount == 0 && elem_to_pop.textContent.length == 0) {
+			elem_to_pop.remove();
+		}
+		elem_stack.pop();
+		elem_cloner_stack.pop();
+	};
+	self.reset = () => {
+		// Leave only the slide elem
+		while (elem_stack.length > 1) {
+			self.pop();
+		}
+	};
+	return self;
+})();
 
-function start_new_slide(presentation_ended = false) {
-	start_new_slide.slide_num ??= 1;
-	if (presentation_ended) {
-		start_new_slide.slide_num = '';
-	}
-	current_slide = document.body.appendChild(document.createElement('div'));
-	const slide_id = start_new_slide.slide_num == '' ? '' : start_new_slide.slide_num++;
-	current_slide.setAttribute('data-slide-id', slide_id);
-	current_elem = null;
-}
+const presentation = (() => {
+	let slide_num = 1;
+	const append_slide = (slide_id) => {
+		const slide = document.body.appendChild(document.createElement('div'));
+		slide.setAttribute('data-slide-id', slide_id);
+		slide_elem_stack.change_slide_elem(slide);
+	};
+
+	return {
+		start_new_slide: () => {
+			append_slide(slide_num++);
+		},
+		end_presentation: () => {
+			slide_num = '';
+			append_slide('');
+		},
+	};
+})();
+
 function hypenize(str) {
 	return str.replaceAll(/\s/g, '-');
 }
@@ -328,28 +376,28 @@ function parse_markdown_lines(lines, line_idx) {
 	}
 
 	let line = lines[line_idx];
-	if (line.startsWith('~')) {
-		if (line.startsWith('~~')) {
-			start_new_slide(true);
-			line = line.slice(2);
+	let m;
+	if ((m = line.match(/^\s*(~~?)/))) {
+		if (m[1] == '~~') {
+			presentation.end_presentation();
 		} else {
-			start_new_slide();
-			line = line.slice(1);
+			presentation.start_new_slide();
 		}
+		line = line.slice(0, m[0].length - m[1].length) + line.slice(m[0].length);
 	}
 
 	const add_heading = (level) => {
+		slide_elem_stack.reset();
 		const a = document.createElement('a');
-		const h = current_slide.appendChild(elem_of('h' + level, ...parse_markdown_text(line.slice(level + 1).trim()), a));
+		const h = slide_elem_stack.top().appendChild(elem_of('h' + level, ...parse_markdown_text(line.slice(level + 1).trim()), a));
 		h.id = ID.make_unique(hypenize(h.textContent));
 		if (level == 1 && document.querySelector('head > title') == null) {
 			document.head.appendChild(elem_with_text('title', h.textContent));
 		}
-		current_elem = null;
 	};
 
-	if (line === '') {
-		current_elem = null;
+	if (line.substr(0).trim() === '') {
+		slide_elem_stack.reset();
 	} else if (line.startsWith('# ')) {
 		add_heading(1);
 	} else if (line.startsWith('## ')) {
@@ -362,51 +410,77 @@ function parse_markdown_lines(lines, line_idx) {
 		add_heading(5);
 	} else if (line.startsWith('###### ')) {
 		add_heading(6);
-	} else if (line.startsWith('- ')) {
-		current_elem = null;
-		let ul = current_slide.appendChild(document.createElement('ul'));
-		for (;;) {
-			ul.appendChild(elem_of('li', ...parse_markdown_text(line.slice(2))));
-			if (line_idx + 1 < lines.length && lines[line_idx + 1].match(/^~?- /) != null) {
-				line = lines[++line_idx];
-				if (line.startsWith('~')) {
-					ul.style.marginBottom = '0px';
-					line = line.slice(1);
-					start_new_slide();
-					ul = current_slide.appendChild(document.createElement('ul'));
+	} else if ((m = line.match(/^(\s*)(-\s+|(\d+)\.\s+)/))) {
+		const indent = m[1].length;
+		// Remove deeper elements
+		while (slide_elem_stack.size() > 0) {
+			if (slide_elem_stack.top().tagName == 'LI') {
+				if (slide_elem_stack.top().dataset.indent <= indent) {
+					break; // we removed all elements till the required indent level
 				}
-				continue;
+				slide_elem_stack.pop(); // li
+				slide_elem_stack.top().style.marginBottom = '0px'; // no additional margin between list elems (after the more deep list element)
+				slide_elem_stack.pop(); // ul or ol
+			} else {
+				slide_elem_stack.pop(); // any element we found
 			}
-			break;
 		}
-	} else if (/^\d+\.\s/.test(line)) {
-		current_elem = null;
-		let ol = current_slide.appendChild(document.createElement('ol'));
-		let item_num = parseInt(line.match(/^\d+/)[0]);
-		ol.start = item_num;
-		for (;;) {
-			ol.appendChild(elem_of('li', ...parse_markdown_text(line.slice(line.match(/^\d+\.\s/)[0].length))));
-			if (line_idx + 1 < lines.length && /^~?\d+\.\s/.test(lines[line_idx + 1])) {
-				line = lines[++line_idx];
-				++item_num;
-				if (line.startsWith('~')) {
-					ol.style.marginBottom = '0px';
-					line = line.slice(1);
-					start_new_slide();
-					ol = current_slide.appendChild(document.createElement('ol'));
-					ol.start = item_num;
+		const is_list_numbered = !m[2].startsWith('-');
+		const list_tag_name = is_list_numbered ? 'ol' : 'ul';
+		const li_cloner = (prev_elem) => {
+			const li = document.createElement('li');
+			li.dataset.indent = indent;
+			if (prev_elem) {
+				li.classList.add('hide-marker');
+			}
+			return li;
+		};
+		const start_new_list = () => {
+			slide_elem_stack.push((prev_elem) => {
+				const list_elem = document.createElement(list_tag_name);
+				list_elem.dataset.indent = indent;
+				if (is_list_numbered) {
+					if (prev_elem) {
+						list_elem.start = prev_elem.start + prev_elem.querySelectorAll(':scope > li:not(.hide-marker)').length;
+					} else {
+						list_elem.start = parseInt(m[3]);
+					}
 				}
-				continue;
+				if (prev_elem) {
+					prev_elem.style.marginBottom = '0px'; // no additional margin between list elems
+				}
+				return list_elem;
+			});
+			slide_elem_stack.push(li_cloner);
+		};
+		// Append the li element
+		if (slide_elem_stack.top().tagName == 'LI') {
+			if (slide_elem_stack.top().dataset.indent < indent) {
+				start_new_list();
+			} else {
+				console.assert(slide_elem_stack.top().dataset.indent == indent);
+				slide_elem_stack.pop(); // li
+				if (slide_elem_stack.top().tagName == list_tag_name.toUpperCase()) {
+					// The same kind of list
+					slide_elem_stack.push(li_cloner);
+				} else {
+					// Other kind of list
+					slide_elem_stack.top().style.marginBottom = '0px'; // no additional margin between list elems (after the more deep list element)
+					slide_elem_stack.pop(); // ul or ol
+					start_new_list();
+				}
 			}
-			break;
-		}
-	} else {
-		if (current_elem?.tagName != 'P') {
-			current_elem = current_slide.appendChild(document.createElement('p'));
 		} else {
-			current_elem.append('\n');
+			start_new_list();
 		}
-		current_elem.append(...parse_markdown_text(line));
+		slide_elem_stack.top().append(...parse_markdown_text(line.slice(m[0].length)));
+	} else {
+		if (slide_elem_stack.top().tagName != 'P') {
+			slide_elem_stack.push(() => document.createElement('p'));
+		} else {
+			slide_elem_stack.top().append('\n');
+		}
+		slide_elem_stack.top().append(...parse_markdown_text(line));
 	}
 
 	parse_markdown_lines(lines, line_idx + 1);
@@ -416,7 +490,7 @@ const przepisy_kulinarne_a = elem_with_text('a', 'przepisy-kulinarne');
 przepisy_kulinarne_a.href = '.';
 document.body.appendChild(elem_of('h1', przepisy_kulinarne_a));
 
-start_new_slide();
+presentation.start_new_slide();
 parse_markdown_lines(markdown.split('\n').map(l => l.trimEnd()), 0);
 anchors.add('[data-slide-id] > h1, h2, h3, h4, h5, h6'); // add anchor buttons to every h1, h2, etc. element
 

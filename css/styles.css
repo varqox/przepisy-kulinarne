@@ -47,8 +47,12 @@ p, ul, ol {
 ul, ol {
 	padding-left: 2em;
 }
-li + li {
+li {
 	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
+li.hide-marker::marker {
+	content: '';
 }
 a {
 	color: #0366d6;
