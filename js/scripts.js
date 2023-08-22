@@ -480,7 +480,7 @@ function parse_markdown_lines(lines, line_idx) {
 		}
 		slide_elem_stack.top().append(...parse_markdown_text(line.slice(m[0].length)));
 	} else {
-		if (slide_elem_stack.top().tagName != 'P') {
+		if (slide_elem_stack.top().tagName != 'P' && slide_elem_stack.top().tagName != 'LI') {
 			slide_elem_stack.push(() => document.createElement('p'));
 		} else {
 			slide_elem_stack.top().append('\n');
