@@ -35,7 +35,11 @@ scale.type = 'number'
 scale.value = '1.0'
 let scale_denom = 1;
 scale.min = 0
+const update_scale_elem_width = () => {
+	scale.style.width = `calc(${scale.value.length + 3}ch + 3px)`;
+};
 const scaled_values = [];
+scale.addEventListener('input', update_scale_elem_width);
 scale.addEventListener('change', (event) => {
 	for (const sv of scaled_values) {
 		sv.update();
@@ -219,6 +223,7 @@ function parse_markdown_text(str) {
 			if ((m = part.match(/^\s*scale(\s+(\d+(\.\d+)?)(\s*\/\s*(\d+(\.\d+)?)(\s+hide_denom)?)?)?\s*$/)) != null) {
 				// scale x / y
 				scale.value = m[2] ?? 1;
+				update_scale_elem_width();
 				scale_denom = m[5] ?? 1;
 				append_elem(scale);
 				if (scale_denom != 1 && m[7] === undefined) {
