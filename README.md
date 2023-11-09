@@ -18,6 +18,9 @@ Pyszny przepis którego używamy w domu.
 ### [Brownie](https://varqox.github.io/przepisy-kulinarne/brownie.html)
 Niezawodny przepis na czekoladową rozkosz...
 
+### [Szarlotka Julii](https://varqox.github.io/przepisy-kulinarne/szarlotka_julii.html)
+Pyszna szarlotka z przepisu od znajomej.
+
 ### [Drożdżówki](https://varqox.github.io/przepisy-kulinarne/drożdżówki.html)
 Pyszne drożdżówki, nie takie suche i słodkie jak kupne.
 
