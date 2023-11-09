@@ -15,6 +15,9 @@ Długo doskonalone i pyszne, wychodzą puszyste i aksamitne w smaku, nie za such
 ### [Tiramisu](https://varqox.github.io/przepisy-kulinarne/tiramisu.html)
 Pyszny przepis którego używamy w domu.
 
+### [Brownie](https://varqox.github.io/przepisy-kulinarne/brownie.html)
+Niezawodny przepis na czekoladową rozkosz...
+
 ### [Drożdżówki](https://varqox.github.io/przepisy-kulinarne/drożdżówki.html)
 Pyszne drożdżówki, nie takie suche i słodkie jak kupne.
 
