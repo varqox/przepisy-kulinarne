@@ -30,6 +30,9 @@ Prosty i szybki domowy budyń
 ### [Biszkopt](https://varqox.github.io/przepisy-kulinarne/biszkopt.html)
 Sprawdzony i niezawodny przepis na klasyczny biszkopt, bez proszku do pieczenia.
 
+### [Sernik baskijski](https://varqox.github.io/przepisy-kulinarne/sernik_baskijski.html)
+Mega kremowy i pyszny (anty)sernik.
+
 ### [Ciasto francuskie ze szpinakiem i fetą](ciasto_francuskie_ze_szpinakiem_i_fetą.html)
 
 ## Obiadowe
