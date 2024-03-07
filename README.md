@@ -35,6 +35,8 @@ Mega kremowy i pyszny (anty)sernik.
 
 ### [Ciasto francuskie ze szpinakiem i fetą](ciasto_francuskie_ze_szpinakiem_i_fetą.html)
 
+### [Lody czekoladowe](lody_czekoladowe.html)
+
 ## Obiadowe
 
 ### [Chili con carne](https://varqox.github.io/przepisy-kulinarne/chili_con_carne.html)
