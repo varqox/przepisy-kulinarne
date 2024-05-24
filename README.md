@@ -70,6 +70,9 @@ Dość lekkie, pożywne i proste do przygotowania. Smak dosyć interesujący, al
 
 ## Pozostałe
 
+### [Chleb](https://varqox.github.io/przepisy-kulinarne/chleb.html)
+Prosty, szybki i smaczny chleb domowy.
+
 ### [Makaron domowy](https://varqox.github.io/przepisy-kulinarne/makaron_domowy.html)
 Sprawdzony przepis na domowy makaron.
 
