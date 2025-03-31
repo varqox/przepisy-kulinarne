@@ -68,6 +68,10 @@ Przepyszne pesto ze świeżej bazylii. Kupowane w słoikach się do tego nie umy
 ### [Placki z serka wiejskiego](https://varqox.github.io/przepisy-kulinarne/placki_z_serka_wiejskiego.html)
 Dość lekkie, pożywne i proste do przygotowania. Smak dosyć interesujący, ale dobry.
 
+## Sałatki
+
+### [Sałatka z tuńczykiem](https://varqox.github.io/przepisy-kulinarne/sałatka_z_tuńczykiem.html)
+
 ## Pozostałe
 
 ### [Chleb](https://varqox.github.io/przepisy-kulinarne/chleb.html)
