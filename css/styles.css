@@ -11,6 +11,7 @@ body {
 	margin-left: auto;
 	padding-left: 16px;
 	padding-right: 16px;
+	margin-bottom: 100vh; /* Allow scrolling past the end */
 }
 h1 {
 	padding-bottom: .3em;
