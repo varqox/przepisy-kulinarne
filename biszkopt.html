@@ -5,10 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 	<link rel="icon" href="data:,">
-	<script defer src="js/anchor.min.js"></script>
-	<script defer src="js/scripts.js"></script>
+	<script>
+		const common_path = '/przepisy-kulinarne/';
+		const idx = window.location.pathname.lastIndexOf(common_path);
+		const root_dir = (() => {
+			const root_dir = window.location.pathname.substring(0, idx + common_path.length);
+			const script = document.head.appendChild(document.createElement('script'));
+			script.defer = true;
+			script.src = `${root_dir}js/scripts.js`;
+			return root_dir;
+		})();
+	</script>
 </head>
-<body style="display: none">
+<script type="text/markdown">
 
 # Biszkopt
 Przeskaluj przepis na: $scale 4 / 4 hide_denom$ jajka.\

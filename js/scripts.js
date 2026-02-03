@@ -1,7 +1,4 @@
-const markdown = document.body.innerHTML;
-// Unhide body
-document.body.textContent = '';
-document.body.removeAttribute('style');
+const markdown = document.head.querySelector('script[type="text/markdown"]').textContent;
 
 function elem_with_text(tag, text) {
 	const elem = document.createElement(tag);
@@ -28,6 +25,41 @@ const ID = (() => {
 		}
 	};
 })();
+
+function decode_url_hash(url_hash = window.location.hash) {
+	const m = url_hash.match(/^(#slide:(\d+)|##(.*))?$/);
+	const slide_id = m?.[2];
+	const fragment_identifier = m?.[3];
+	console.log("fragment_identifier:", fragment_identifier);
+	return {
+		// slide_id and fragment_identifier cannot be set at the same time
+		slide_id: slide_id == null ? null : parseInt(slide_id),
+		fragment_identifier: fragment_identifier == null ? null : decodeURI(fragment_identifier),
+	};
+}
+function encode_url_hash(decoded_hash) {
+	let res = '';
+	if (decoded_hash.slide_id != null) {
+		res += `#slide:${decoded_hash.slide_id}`;
+	} else if (decoded_hash.fragment_identifier != null) {
+		res += `##${encodeURI(decoded_hash.fragment_identifier)}`;
+	}
+	return res;
+}
+function change_url_hash(decoded_hash_changer) {
+	const decoded_hash = decode_url_hash();
+	decoded_hash_changer(decoded_hash);
+	const url_without_prefix = window.location.href.substring(0, window.location.href.length - window.location.hash.length);
+	// Empty string in URL in history.replaceState() is no-op on Firefox and Chromium, hence the prefix.
+	history.replaceState(history.state, '', url_without_prefix + encode_url_hash(decoded_hash));
+}
+function url_hash_of_fragment_identifier(fragment_identifier) {
+	const decoded_hash = decode_url_hash();
+	decoded_hash.slide_id = null;
+	decoded_hash.fragment_identifier = fragment_identifier;
+	return encode_url_hash(decoded_hash);
+}
+// TODO: encode current scale in URL and update the href links upon scale change
 
 const scale = document.createElement('input')
 scale.id = ID.make_unique('scale');
@@ -88,27 +120,117 @@ const slide_elem_stack = (() => {
 })();
 
 const presentation = (() => {
-	let slide_num = 1;
-	const append_slide = (slide_id) => {
-		const slide = document.body.appendChild(document.createElement('div'));
-		slide.setAttribute('data-slide-id', slide_id);
-		slide_elem_stack.change_slide_elem(slide);
+	let currently_shown_slide = null;
+
+	const buttons_listener = (event) => {
+		if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+			return;
+		}
+		if (event.key === 'Escape') {
+			presentation.show_slide(null);
+		} else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+			presentation.show_slide(currently_shown_slide.id + 1);
+		} else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+			presentation.show_slide(currently_shown_slide.id - 1);
+		}
+	};
+
+	let swipe_start = null;
+	const pointerdown_listener = (event) => {
+		if (event.pointerType == 'touch') {
+			swipe_start = {x: event.screenX, y: event.screenY};
+		}
+	};
+	const pointermove_listener = (event) => {
+		if (swipe_start != null && event.pointerType == 'touch') {
+			const delta_x = event.screenX - swipe_start.x;
+			const delta_y = event.screenY - swipe_start.y;
+			const abs_delta_x = Math.abs(delta_x);
+			const abs_delta_y = Math.abs(delta_y);
+
+			const SWIPE_THRESHOLD = 4;
+			if (abs_delta_x > abs_delta_y) {
+				if (delta_x > SWIPE_THRESHOLD) {
+					presentation.show_slide(currently_shown_slide.id - 1);
+					swipe_start = null;
+				} else if (delta_x < -SWIPE_THRESHOLD) {
+					presentation.show_slide(currently_shown_slide.id + 1);
+					swipe_start = null;
+				}
+			} else if (abs_delta_y > abs_delta_x) {
+				if (delta_y > SWIPE_THRESHOLD) {
+					presentation.show_slide(currently_shown_slide.id - 1);
+					swipe_start = null;
+				} else if (delta_y < -SWIPE_THRESHOLD) {
+					presentation.show_slide(currently_shown_slide.id + 1);
+					swipe_start = null;
+				}
+			}
+		}
+		event.preventDefault();
 	};
 
 	return {
-		start_new_slide: () => {
-			append_slide(slide_num++);
-		},
-		end_presentation: () => {
-			slide_num = '';
-			append_slide('');
+		builder: (() => {
+			let currently_built_slide_num = 0;
+			return {
+				start_new_slide: () => {
+					const slide = document.body.appendChild(document.createElement('div'));
+					slide.setAttribute('data-slide-id', ++currently_built_slide_num);
+					slide_elem_stack.change_slide_elem(slide);
+				},
+				end_presentation: () => {
+					// Create slide without id that will contain rest of the HTML elements.
+					slide_elem_stack.change_slide_elem(document.body.appendChild(document.createElement('div')));
+				}
+			};
+		})(),
+		// Pass null as slide_id to close the presentation.
+		show_slide: (slide_id) => {
+			const next_slide_elem = slide_id == null ? null : document.querySelector(`[data-slide-id="${slide_id}"]`);
+			if (next_slide_elem == null) {
+				if (currently_shown_slide != null) {
+					// End presentation.
+					currently_shown_slide.elem.classList.remove('active');
+					currently_shown_slide = null;
+					document.removeEventListener('keydown', buttons_listener);
+					document.removeEventListener('pointerdown', pointerdown_listener);
+					document.removeEventListener('pointermove', pointermove_listener);
+					document.body.classList.remove('presentation');
+					change_url_hash((decoded_hash) => {
+						decoded_hash.slide_id = null;
+					});
+				}
+				return;
+			}
+
+			if (currently_shown_slide == null) {
+				// Start presentation.
+				document.body.classList.add('presentation');
+				document.addEventListener('keydown', buttons_listener, {passive: true});
+				swipe_start = null;
+				document.addEventListener('pointerdown', pointerdown_listener, {passive: true});
+				document.addEventListener('pointermove', pointermove_listener);
+			} else {
+				currently_shown_slide.elem.classList.remove('active');
+			}
+
+			next_slide_elem.classList.add('active');
+			next_slide_elem.scrollIntoView({behavior: 'smooth', block: 'center'});
+			currently_shown_slide = {
+				id: slide_id,
+				elem: next_slide_elem,
+			};
+			change_url_hash((decoded_hash) => {
+				if (decoded_hash.fragment_identifier != null) {
+					// Starting presentation while something was navigated -> add history entry instead of replacing it.
+					history.pushState(history.state, '', window.location.href);
+				}
+				decoded_hash.slide_id = slide_id;
+			});
 		},
 	};
 })();
-
-function hypenize(str) {
-	return str.replaceAll(/\s/g, '-');
-}
 
 function parse_markdown_text(str) {
 	parse_markdown_text.vars ??= new Map();
@@ -233,7 +355,9 @@ function parse_markdown_text(str) {
 				// present
 				const a = document.createElement('a');
 				a.classList.add('present');
-				a.href = '#slide-1';
+				const decoded_hash = decode_url_hash();
+				decoded_hash.slide_id = 1;
+				a.href = encode_url_hash(decoded_hash);
 				a.innerHTML = `
 					<svg fill="#000000" height="0.875em" width="0.875em" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
 						 viewBox="0 0 17.804 17.804" xml:space="preserve">
@@ -247,6 +371,12 @@ function parse_markdown_text(str) {
 						</g>
 					</g>
 					</svg>`;
+				a.addEventListener('click', (e) => {
+					if (!e.ctrlKey) {
+						presentation.show_slide(1);
+						e.preventDefault();
+					}
+				});
 				append_elem(a);
 			} else if ((m = part.match(/^\s*(\S+)\s*=\s*(\d+(\.\d+)?)(\s*\S+)?\s*$/)) != null) {
 				// name = value units
@@ -384,18 +514,19 @@ function parse_markdown_lines(lines, line_idx) {
 	let m;
 	if ((m = line.match(/^\s*(~~?)/))) {
 		if (m[1] == '~~') {
-			presentation.end_presentation();
+			presentation.builder.end_presentation();
 		} else {
-			presentation.start_new_slide();
+			presentation.builder.start_new_slide();
 		}
 		line = line.slice(0, m[0].length - m[1].length) + line.slice(m[0].length);
 	}
 
 	const add_heading = (level) => {
 		slide_elem_stack.reset();
-		const a = document.createElement('a');
-		const h = slide_elem_stack.top().appendChild(elem_of('h' + level, ...parse_markdown_text(line.slice(level + 1).trim()), a));
-		h.id = ID.make_unique(hypenize(h.textContent));
+		const a = elem_of('a', ...parse_markdown_text(line.slice(level + 1).trim()));
+		const h = slide_elem_stack.top().appendChild(elem_of('h' + level, a));
+		h.id = ID.make_unique(h.textContent.trim());
+		a.href = url_hash_of_fragment_identifier(h.id);
 		if (level == 1 && document.querySelector('head > title') == null) {
 			document.head.appendChild(elem_with_text('title', h.textContent));
 		}
@@ -492,119 +623,52 @@ function parse_markdown_lines(lines, line_idx) {
 }
 
 const przepisy_kulinarne_a = elem_with_text('a', 'przepisy-kulinarne');
-przepisy_kulinarne_a.href = '.';
+przepisy_kulinarne_a.href = root_dir;
 document.body.appendChild(elem_of('h1', przepisy_kulinarne_a));
 
-presentation.start_new_slide();
+presentation.builder.start_new_slide();
 parse_markdown_lines(markdown.split('\n').map(l => l.trimEnd()), 0);
-anchors.add('[data-slide-id] > h1, h2, h3, h4, h5, h6'); // add anchor buttons to every h1, h2, etc. element
 
-// Allow scrolling past the page end
-const spacer = document.body.appendChild(document.createElement('div'));
-spacer.style.marginTop = 'calc(100vh - 16px)';
-
-function start_presentation(slide_to_show) {
-	document.body.classList.add('presentation');
-	slide_to_show.classList.add('active');
-	slide_to_show.scrollIntoView({behavior: 'smooth', block: 'center'});
-	history.replaceState(history.state, '', document.location.href.slice(0, -document.location.hash.length) + `#slide-${slide_to_show.getAttribute('data-slide-id')}`);
-
-	const navigate = (direction) => {
-		const current_slide = document.querySelector('[data-slide-id].active');
-		const slide_id = current_slide.getAttribute('data-slide-id');
-		const next_slide_id = parseInt(slide_id) + direction;
-		const next_slide = document.querySelector(`[data-slide-id="${next_slide_id}"]`);
-		if (next_slide == null) {
-			end_presentation(true);
-		} else {
-			current_slide.classList.remove('active');
-			next_slide.classList.add('active');
-			next_slide.scrollIntoView({behavior: 'smooth', block: 'center'});
-			history.replaceState(history.state, '', document.location.href.slice(0, -document.location.hash.length) + `#slide-${next_slide_id}`);
-		}
+document.body.addEventListener('click', (event) => {
+	if (!event.ctrlKey &&
+			event.target.tagName == 'A' &&
+			event.target.attributes.getNamedItem("href")?.value?.[0] == '#' &&
+			event.target.hash == window.location.hash) {
+		// When window.location.hash == event.target.hash, popstate event is not triggered so
+		// the popstate handler won't navigate to the element, so we need to do it manually.
+		document.getElementById(decode_url_hash(event.target.hash).fragment_identifier)?.scrollIntoView();
 	}
+}, {passive: true});
 
-	start_presentation.buttons_listener = (event) => {
-		if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-			return;
-		}
-		if (event.key === 'Escape') {
-			end_presentation(true);
-		} else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-			navigate(1);
-		} else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-			navigate(-1);
-		}
-	};
-
-	const SWIPE_THRESHOLD = 4;
-	let swipe_start = null;
-
-	start_presentation.pointerdown_listener = (event) => {
-		if (event.pointerType == 'touch') {
-			swipe_start = {x: event.screenX, y: event.screenY};
-		}
-	};
-	start_presentation.pointermove_listener = (event) => {
-		if (swipe_start != null && event.pointerType == 'touch') {
-			const delta_x = event.screenX - swipe_start.x;
-			const delta_y = event.screenY - swipe_start.y;
-			const abs_delta_x = Math.abs(delta_x);
-			const abs_delta_y = Math.abs(delta_y);
-			if (abs_delta_x > abs_delta_y) {
-				if (delta_x > SWIPE_THRESHOLD) {
-					navigate(-1);
-					swipe_start = null;
-				} else if (delta_x < -SWIPE_THRESHOLD) {
-					navigate(1);
-					swipe_start = null;
-				}
-			} else if (abs_delta_y > abs_delta_x) {
-				if (delta_y > SWIPE_THRESHOLD) {
-					navigate(-1);
-					swipe_start = null;
-				} else if (delta_y < -SWIPE_THRESHOLD) {
-					navigate(1);
-					swipe_start = null;
-				}
-			}
-		}
-		event.preventDefault();
-	};
-
-	document.addEventListener('keydown', start_presentation.buttons_listener, {passive: true});
-	document.addEventListener('pointerdown', start_presentation.pointerdown_listener, {passive: true});
-	document.addEventListener('pointermove', start_presentation.pointermove_listener);
-}
-
-function end_presentation(go_back_in_history) {
-	document.body.classList.remove('presentation');
-	document.querySelector('[data-slide-id].active')?.classList?.remove('active');
-	document.removeEventListener('keydown', start_presentation.buttons_listener);
-	document.removeEventListener('pointerdown', start_presentation.pointerdown_listener);
-	document.removeEventListener('pointermove', start_presentation.pointermove_listener);
-	if (go_back_in_history && history.length > 1) {
-		history.back();
-	} else {
-		history.replaceState(history.state, '', document.location.href.slice(0, -document.location.hash.length));
+/*
+Navigation should work like this:
+	* opening site ->
+		- slide: open slide;
+		- non-slide -> scroll
+	* clicking present ->
+		- slide: replace slide
+		- empty hash -> open slide
+		- other hash -> add history entry, open slide
+	* Ctrl + clicking present ->
+	    - open: slide 1 in the new tap
+	* going back ->
+		- slide: replace;
+		- non-slide -> close slide if open (don't scroll - browser should jump scroll position by itself)
+	* going forward ->
+		- slide: open / replace slide
+		- non-slide -> close slide if open (don't scroll - browser should jump scroll position by itself)
+	* navigating by changing the url:
+		- slide: open / change slide
+		- non-slide -> navigate
+*/
+function popstate_handler() {
+	const decoded_hash = decode_url_hash();
+	presentation.show_slide(decoded_hash.slide_id);
+	if (decoded_hash.fragment_identifier != null) {
+		// This is no-op if popstate was caused going back / forth in history.
+		document.getElementById(decoded_hash.fragment_identifier)?.scrollIntoView();
 	}
 }
 
-const start_presentation_if_url_selects_slide = () => {
-	let m = document.location.hash.match(/^#slide-(\d+)$/);
-	if (m != null) {
-		const x = document.querySelector(`[data-slide-id="${m[1]}"]`);
-		if (x) {
-			start_presentation(x);
-		}
-	}
-}
-
-start_presentation_if_url_selects_slide();
-
-window.onpopstate = (event) => {
-	if (document.body.classList.contains('presentation')) {
-		end_presentation(false);
-	}
-	start_presentation_if_url_selects_slide();
-};
+window.addEventListener('popstate', popstate_handler);
+popstate_handler();

@@ -59,6 +59,9 @@ a {
 	color: #0366d6;
 	text-decoration: none;
 }
+h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a {
+	color: inherit;
+}
 a:hover {
 	text-decoration: underline;
 }
@@ -78,17 +81,17 @@ a.anchorjs-link {
 	height: 2em;
 	vertical-align: middle;
 }
-body.presentation [data-slide-id] {
+body.presentation > * {
 	opacity: 0.16666666666666;
 	pointer-events: none;
 }
-body.presentation [data-slide-id].active {
+body.presentation > [data-slide-id].active {
 	position: relative;
 	opacity: 1;
 	pointer-events: auto;
 	background: #f8f4ea;
 }
-body.presentation [data-slide-id].active::before {
+body.presentation > [data-slide-id].active::before {
 	content: '';
 	position: absolute;
 	top: -0.333rem;
@@ -101,7 +104,7 @@ body.presentation [data-slide-id].active::before {
 	border-top-right-radius: 0.333em;
 	z-index: -1;
 }
-body.presentation [data-slide-id].active::after {
+body.presentation > [data-slide-id].active::after {
 	content: '';
 	position: absolute;
 	bottom: -0.333rem;

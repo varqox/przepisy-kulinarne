@@ -5,10 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 	<link rel="icon" href="data:,">
-	<script defer src="js/anchor.min.js"></script>
-	<script defer src="js/scripts.js"></script>
+	<script>
+		const common_path = '/przepisy-kulinarne/';
+		const idx = window.location.pathname.lastIndexOf(common_path);
+		const root_dir = (() => {
+			const root_dir = window.location.pathname.substring(0, idx + common_path.length);
+			const script = document.head.appendChild(document.createElement('script'));
+			script.defer = true;
+			script.src = `${root_dir}js/scripts.js`;
+			return root_dir;
+		})();
+	</script>
 </head>
-<body style="display: none">
+<script type="text/markdown">
 
 # Ciasto marchewkowe
 
@@ -24,7 +33,7 @@ Zaczynałem eksperymentowanie od przepisu: https://poprostupycha.com.pl/przepis/
 ### Na ciasto
 - dwie miski: większa i mniejsza
 - ___$mąka_g = 265g$ mąki___ pszennej uniwersalnej
-- ___$proszek_g = 12.5g$___ BIO ___proszku do pieczenia___ (to ważne żeby był __BIO__ --- patrz [wnioski z eksperymentów](#BIO-proszek-do-pieczenia))
+- ___$proszek_g = 12.5g$___ BIO ___proszku do pieczenia___ (to ważne żeby był __BIO__ --- patrz [wnioski z eksperymentów](##BIO proszek do pieczenia))
 - ok. ___$wanilia_g = 1g$ wanilii mielonej___ (opcjonalnie)
 - ok. ___$przyprawa_do_piernika_g = 2.5g$___ (płaska łyżeczka = 2.5g) ___przyprawy do piernika___ (czystej przyprawy, takiej bez cukru; przeskalować, gdy z cukrem)
 - ok. ___$cynamon_g = 1.5g$___ (płaska łyżeczka = 1.5g) cynamonu
@@ -53,7 +62,7 @@ Zaczynałem eksperymentowanie od przepisu: https://poprostupycha.com.pl/przepis/
 ~5. Mieszamy wszystko dokładnie trzepaczką.
 ~6. Ścieramy $marchewka_g$ obranej marchewki na drobnych oczkach (lub rozdrabniamy w np. blenderze na kawałki około 2-3mm średnicy w przekroju) i dodajemy do miski. Marchewki nie ma co odsączać w tym przepisie.
 ~7. Bierzemy ___większą___ miskę, wsypujemy $cukier_g$ cukru i wbijamy $jajka$ jajek.
-~8. Mocno ubijamy jajka z cukrem na [jasną puchową masę](#Ubicie-jajek) (cukier nie musi się do końca rozpuścić).
+~8. Mocno ubijamy jajka z cukrem na [jasną puchową masę](##Ubicie jajek) (cukier nie musi się do końca rozpuścić).
 ~9. Do jajek dodajemy $olej_g$ oleju i wszystko mieszamy dokładnie.
 ~10. Do masy jajecznej wsypujemy całą zawartość drugiej miski (tzn. sypkie + marchewka).
 ~11. Całość mieszamy do połączenia składników. Mieszamy nie za mocno i nie za długo, żeby nie odpowietrzyć masy za mocno.
@@ -65,7 +74,7 @@ Zaczynałem eksperymentowanie od przepisu: https://poprostupycha.com.pl/przepis/
 Ciasto bez polewy też jest pycha i polecam. Polewa to trochę wartości dodanej, ale i tak bez niej ciasto jest pyszne.
 
 ~1. Do miski dać $polewa_masło_g$ masła i $polewa_cukier_puder_g$ cukru pudru.
-~2. Wymieszać trzepaczką / zmiksować dokładnie na jednolitą, kremową masę. [Kolejność jest ważna, serek dajemy potem](#Mieszanie-polewy).
+~2. Wymieszać trzepaczką / zmiksować dokładnie na jednolitą, kremową masę. [Kolejność jest ważna, serek dajemy potem](##Mieszanie polewy).
 ~3. Dodajemy $polewa_serek_g$ serka i znów mieszamy / miksujemy na jednolitą kremową masę.
 ~4. Wstawiamy masę do lodówki.
 ~5. Gdy ciasto wystygnie, możemy nakładać masę.
