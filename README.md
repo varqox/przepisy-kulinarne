@@ -54,6 +54,9 @@ Pyszne kotlety mielone, dość inne niż typowe.
 ### [Kurczak pieczony mamy](https://varqox.github.io/przepisy-kulinarne/kurczak_pieczony_mamy.html)
 Pyszny kurczak curry mamy, długo doskonalony przepis. Kurczak wychodzi pyszny i soczysty, a do tego dużo pysznego sosu do ryżu lub ziemniaków. Często gości w moim domu rodzinnym jako niedzielny obiad.
 
+### [Pierogi ruskie](https://varqox.github.io/przepisy-kulinarne/pierogi_ruskie.html)
+Bardzo smaczne, jak u babci w dzieciństwie.
+
 ### [Pierogi z pieczoną dynią i białym serem](https://varqox.github.io/przepisy-kulinarne/pierogi_z_pieczoną_dynią_i_białym_serem.html)
 Ciekawe pierogi. Smak niecodzienny, ale dobry. Polecam wypróbować.
 
